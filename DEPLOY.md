@@ -60,9 +60,10 @@ From now on, every push to the repository's main branch redeploys automatically.
 
 ### Plan and region
 
-`render.yaml` uses the **Starter** plan in **Singapore** with a 1 GB disk for receipt photos. To try
-it for free first, change `plan: starter` to `plan: free` and delete the `disk:` block (free
-services can't have disks, so uploaded receipts would disappear on each restart or deploy).
+`render.yaml` uses the **Free** plan in **Singapore**, so no card is needed. Free services sleep after
+about 15 minutes idle and can't keep uploaded receipt photos across restarts. To stay on 24/7, change
+`plan: free` to `plan: starter` (paid) and uncomment the `disk:` block, or switch the plan in
+Render → service → **Settings → Instance Type** (and add a disk under **Disks**).
 
 ### Your own domain (optional)
 

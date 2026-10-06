@@ -4,18 +4,17 @@ services:
   - type: web
     name: messmate
     runtime: node
-    plan: starter # "starter" stays on 24/7. "free" works too but sleeps after ~15 min idle.
+    plan: free # sleeps after ~15 min idle. Change to "starter" (paid) to stay on 24/7, and add the disk below.
     region: singapore
     buildCommand: npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     autoDeploy: true
-    # Keeps receipt photos across restarts and deploys. Disks need a paid plan;
-    # delete these 4 lines if you switch to the free plan.
-    disk:
-      name: uploads
-      mountPath: /opt/render/project/src/backend/uploads
-      sizeGB: 1
+    # On a paid plan, uncomment to keep receipt photos across restarts and deploys:
+    # disk:
+    #   name: uploads
+    #   mountPath: /opt/render/project/src/backend/uploads
+    #   sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production

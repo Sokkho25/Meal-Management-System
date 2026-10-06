@@ -128,6 +128,8 @@ Add `capacitor://localhost,https://localhost` to the API's `CORS_ORIGINS`. App i
 
 ## Deployment
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Sokkho25/meal-management-system)
+
 **Step-by-step always-on hosting (Render + MongoDB Atlas): see [DEPLOY.md](DEPLOY.md).** The root
 `render.yaml` deploys the API and web app as one service; the root `package.json` has the
 `build`/`start` scripts it uses.

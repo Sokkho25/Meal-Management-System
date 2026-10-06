@@ -1,0 +1,33 @@
+# Render Blueprint: one always-on web service that serves both the API and the web app.
+# Render → New → Blueprint → pick this repo. You will be asked for MONGODB_URI (from MongoDB Atlas).
+services:
+  - type: web
+    name: messmate
+    runtime: node
+    plan: starter # "starter" stays on 24/7. "free" works too but sleeps after ~15 min idle.
+    region: singapore
+    buildCommand: npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    # Keeps receipt photos across restarts and deploys. Disks need a paid plan;
+    # delete these 4 lines if you switch to the free plan.
+    disk:
+      name: uploads
+      mountPath: /opt/render/project/src/backend/uploads
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: MONGODB_URI
+        sync: false # paste your Atlas connection string when Render asks
+      - key: JWT_SECRET
+        generateValue: true # Render creates a long random secret
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGINS
+        value: capacitor://localhost,https://localhost,http://localhost
+      - key: RATE_LIMIT_PER_MIN
+        value: "1000"

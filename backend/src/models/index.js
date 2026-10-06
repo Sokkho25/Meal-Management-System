@@ -1,0 +1,18 @@
+module.exports = {
+  User: require('./User'),
+  Household: require('./Household'),
+  Category: require('./Category'),
+  Month: require('./Month'),
+  Member: require('./Member'),
+  MealEntry: require('./MealEntry'),
+  GuestMeal: require('./GuestMeal'),
+  BazarItem: require('./BazarItem'),
+  Expense: require('./Expense'),
+  Contribution: require('./Contribution'),
+  Settlement: require('./Settlement'),
+  ShoppingItem: require('./ShoppingItem'),
+  MealPlan: require('./MealPlan'),
+  AuditLog: require('./AuditLog'),
+  Notification: require('./Notification'),
+  MonthlyReport: require('./MonthlyReport'),
+};

@@ -1,0 +1,14 @@
+{
+  "appId": "com.messmate.app",
+  "appName": "MessMate",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "StatusBar": {
+      "style": "LIGHT",
+      "backgroundColor": "#0f766e"
+    }
+  }
+}

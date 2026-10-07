@@ -111,7 +111,16 @@ Backend layout: `src/models` (Mongoose schemas), `src/controllers`, `src/service
 (calculation, audit, notifications, month caching), `src/routes`, `src/middleware`
 (auth, access/roles, validation with zod, sanitising, errors).
 
-## Mobile app (Capacitor)
+## Mobile app
+
+- **Install from the website:** the site is a Progressive Web App. On Android (Chrome) tap
+  **Install app** in the menu or ⋮ → *Install app*; on iPhone (Safari) tap Share → *Add to Home Screen*.
+- **Android APK:** `.github/workflows/android.yml` builds the Capacitor app on every push that
+  changes `frontend/` and publishes it at
+  `https://github.com/Sokkho25/Meal-Management-System/releases/download/android-latest/MessMate.apk`
+  (set a repository variable `API_URL` to point it at a different server).
+
+### Building it yourself (Capacitor)
 
 The same React build is packaged for Android and iOS and talks to the same API.
 

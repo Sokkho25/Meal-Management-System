@@ -1,0 +1,79 @@
+# Builds the MessMate Android app (APK) on every change to the web app and publishes it
+# as the "android-latest" release, so there is always one stable download link:
+# https://github.com/<owner>/<repo>/releases/download/android-latest/MessMate.apk
+name: Android app
+
+on:
+  push:
+    branches: [main]
+    paths: ['frontend/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      # The live server the app talks to. Override with a repository variable API_URL.
+      VITE_API_URL: ${{ vars.API_URL || 'https://messmate-j42m.onrender.com' }}
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      # Keep the same signing key between builds so new versions install over old ones.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: messmate-debug-keystore
+
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap add android
+      - name: App icon and splash screen
+        continue-on-error: true
+        run: npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#0f766e' --splashBackgroundColor '#0f766e'
+      - run: npx cap sync android
+
+      - name: Build APK
+        working-directory: frontend/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/MessMate.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MessMate-apk
+          path: MessMate.apk
+
+      - name: Publish download link
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete android-latest --yes --cleanup-tag || true
+          gh release create android-latest MessMate.apk \
+            --title "MessMate Android app" \
+            --notes "Latest Android app, built from ${GITHUB_SHA::7}. Download MessMate.apk on your phone and open it to install (allow installing from your browser if asked). Developed by Sokkho Kundu." \
+            --target "$GITHUB_SHA" --latest

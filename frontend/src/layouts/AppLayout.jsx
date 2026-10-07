@@ -23,6 +23,7 @@ import {
   Wallet,
   X,
   Check,
+  Download,
   NotebookPen,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -223,11 +224,36 @@ function QuickAddMenu({ open, onClose }) {
   );
 }
 
+// Chrome/Edge/Android offer "install this site as an app"; show our own button when they do.
+function useInstallPrompt() {
+  const [prompt, setPrompt] = useState(null);
+  useEffect(() => {
+    const onPrompt = (e) => {
+      e.preventDefault();
+      setPrompt(e);
+    };
+    const onInstalled = () => setPrompt(null);
+    window.addEventListener('beforeinstallprompt', onPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+  if (!prompt) return null;
+  return async () => {
+    prompt.prompt();
+    await prompt.userChoice.catch(() => null);
+    setPrompt(null);
+  };
+}
+
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const { household, month, isClosed, isAdmin } = useWorkspace();
   const [drawer, setDrawer] = useState(false);
   const [quick, setQuick] = useState(false);
+  const install = useInstallPrompt();
   const location = useLocation();
   useEffect(() => setDrawer(false), [location.pathname]);
 
@@ -265,6 +291,12 @@ export default function AppLayout() {
         )}
       </div>
       <div className="border-t border-slate-100 p-3">
+        {install && (
+          <button type="button" onClick={install} className="mb-2 flex w-full items-center gap-3 rounded-xl bg-brand-50 px-3 py-2 text-sm font-medium text-brand-800 transition hover:bg-brand-100">
+            <Download className="size-[18px]" />
+            Install app on this device
+          </button>
+        )}
         <div className="flex items-center gap-3 rounded-xl px-2 py-2">
           <Avatar name={user?.name} src={user?.avatarUrl} size="sm" />
           <div className="min-w-0 flex-1">

@@ -18,6 +18,9 @@ if (Capacitor.isNativePlatform()) {
   import('@capacitor/status-bar').then(({ StatusBar, Style }) => {
     StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
   });
+} else if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  // Lets phones install the website as an app (Add to Home screen).
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 }
 
 createRoot(document.getElementById('root')).render(

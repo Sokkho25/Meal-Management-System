@@ -29,6 +29,9 @@ export default function AuthLayout() {
             <span className="text-lg font-semibold">MessMate</span>
           </div>
           <Outlet />
+          <p className="mt-10 text-center text-xs text-slate-400">
+            Developed by <span className="font-medium text-slate-500">Sokkho Kundu</span>
+          </p>
         </div>
       </div>
     </div>

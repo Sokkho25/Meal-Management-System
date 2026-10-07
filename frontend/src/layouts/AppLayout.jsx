@@ -273,6 +273,7 @@ export default function AppLayout() {
           </div>
           <IconButton icon={LogOut} label="Log out" onClick={logout} />
         </div>
+        <p className="px-2 pt-1 text-[11px] text-slate-400">Developed by Sokkho Kundu</p>
       </div>
     </nav>
   );

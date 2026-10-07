@@ -94,6 +94,7 @@ export function exportReportPdf(r) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.text(`Page ${i} of ${pages}`, doc.internal.pageSize.getWidth() - 80, doc.internal.pageSize.getHeight() - 20);
+    doc.text('MessMate · Developed by Sokkho Kundu', 40, doc.internal.pageSize.getHeight() - 20);
   }
   doc.save(`${r.month.year}-${String(r.month.month).padStart(2, '0')}-report.pdf`);
 }

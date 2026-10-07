@@ -272,3 +272,38 @@ test('full monthly flow', async (t) => {
     assert.equal(res.status, 400);
   });
 });
+
+test('site owner page: first account only', async () => {
+  const anon = api();
+  let res = await anon.post('/auth/login', { email: 'rahim@example.com', password: 'password123' });
+  assert.equal(res.status, 200, res.text);
+  assert.equal(res.body.user.isOwner, true);
+  const owner = api(res.body.token);
+
+  res = await anon.post('/auth/login', { email: 'karim@example.com', password: 'newpassword1' });
+  assert.equal(res.body.user.isOwner, false);
+  const karim = api(res.body.token);
+  res = await karim.get('/owner/stats');
+  assert.equal(res.status, 403);
+  res = await anon.get('/owner/stats');
+  assert.equal(res.status, 401);
+
+  res = await owner.get('/owner/stats');
+  assert.equal(res.status, 200, res.text);
+  assert.ok(res.body.totals.users >= 2);
+  assert.ok(res.body.totals.households >= 1);
+  assert.equal(res.body.signupsByDay.length, 30);
+  assert.ok(res.body.signupsByDay.at(-1).count >= 2);
+  assert.ok(res.body.active.last24h >= 2);
+
+  res = await owner.get('/owner/users?q=KARIM');
+  assert.equal(res.body.total, 1);
+  assert.equal(res.body.items[0].email, 'karim@example.com');
+  assert.ok(res.body.items[0].loginCount >= 2);
+  assert.ok(res.body.items[0].households.some((h) => h.name === 'Bachelor House'));
+  assert.equal(res.body.items[0].passwordHash, undefined);
+
+  res = await owner.get('/owner/households');
+  const h = res.body.items.find((x) => x.name === 'Bachelor House');
+  assert.ok(h && h.months >= 2 && h.members >= 2 && h.owner.email === 'rahim@example.com');
+});

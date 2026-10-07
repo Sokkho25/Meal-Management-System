@@ -15,6 +15,7 @@ import {
   Plus,
   Receipt,
   Settings,
+  ShieldCheck,
   ShoppingBasket,
   UserRound,
   Users,
@@ -253,6 +254,15 @@ export default function AppLayout() {
             {n.label}
           </NavLink>
         ))}
+        {user?.isOwner && (
+          <NavLink
+            to="/owner"
+            className={({ isActive }) => cx('mt-2 flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition', isActive ? 'bg-brand-50 text-brand-800' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')}
+          >
+            <ShieldCheck className="size-[18px]" />
+            Site owner
+          </NavLink>
+        )}
       </div>
       <div className="border-t border-slate-100 p-3">
         <div className="flex items-center gap-3 rounded-xl px-2 py-2">

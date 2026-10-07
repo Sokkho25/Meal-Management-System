@@ -23,6 +23,12 @@ const requireAuth = asyncHandler(async (req, _res, next) => {
     throw ApiError.unauthorized('Password was changed, please log in again');
   }
   req.user = user;
+  // Record activity for the owner page, at most every 5 minutes per user.
+  const now = Date.now();
+  if (!user.lastSeenAt || now - user.lastSeenAt.getTime() > 5 * 60 * 1000) {
+    user.lastSeenAt = new Date(now);
+    User.updateOne({ _id: user._id }, { $set: { lastSeenAt: user.lastSeenAt } }).catch(() => {});
+  }
   next();
 });
 

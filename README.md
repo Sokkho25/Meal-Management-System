@@ -84,6 +84,7 @@ Problems (e.g. food cost but no meals recorded, split amounts that don't add up)
 - Budgets per type with configurable warning thresholds; notifications with per-user settings.
 - Close month (locks editing, stores a frozen snapshot), admin reopen.
 - Audit log of every create/edit/delete/close; soft delete with Trash → restore.
+- Site owner page: every sign-up, last activity and household on the server (first account, or `OWNER_EMAILS`).
 - Search, filters (date range, member, category, type, method, amount) and sorting with pagination.
 
 ## API
@@ -100,6 +101,7 @@ All routes are under `/api`. Authenticated routes need `Authorization: Bearer <t
 | Records | `/months/:id/bazar` (+ `/bulk`), `/expenses` (+ `/recurring`), `/contributions`, `/settlements`, `/shopping-list` (+ `/:itemId/convert`), `/meal-plans` |
 | Reports | `GET /months/:id/reports`, `GET /months/:id/reports/export.csv?section=settlement|meals|bazar|expenses|contributions` |
 | Notifications | `GET /months/:id/notifications`, `POST /months/:id/notifications/dismiss` |
+| Site owner | `GET /owner/stats`, `/owner/users?q=&sort=newest|active&page=`, `/owner/households` |
 | Uploads | `POST /uploads` (multipart `file`; JPG/PNG/WEBP/PDF) |
 
 List endpoints accept `q`, `from`, `to`, `member`, `category`, `expenseType`, `paymentMethod`,

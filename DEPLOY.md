@@ -99,6 +99,10 @@ npm run build && npx cap sync && npx cap open android
 
 ## 5. Things to know
 
+- **Site owner page:** the first account registered on the site sees **Site owner** in the menu,
+  with every sign-up, when each person was last active, and every household. To choose the owner
+  yourself, add `OWNER_EMAILS` (comma-separated emails) in Render → **Environment**.
+
 - **Password reset emails** are not sent yet: the reset link is only written to the server log
   (Render → **Logs**). Members can still change their password while logged in, and an admin can
   read the link from the logs. Hooking up an email service (Brevo, Resend, SendGrid…) is a small

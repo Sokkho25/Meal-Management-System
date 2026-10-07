@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema(
     passwordChangedAt: { type: Date },
     passwordResetTokenHash: { type: String, select: false },
     passwordResetExpires: { type: Date, select: false },
+    lastSeenAt: { type: Date, index: true },
+    loginCount: { type: Number, default: 0 },
     lastHousehold: { type: mongoose.Schema.Types.ObjectId, ref: 'Household' },
     notificationPrefs: {
       missingMeals: { type: Boolean, default: true },

@@ -7,6 +7,7 @@ router.get('/health', (_req, res) => res.json({ ok: true, time: new Date().toISO
 router.use('/auth', require('./auth.routes'));
 router.use('/households', requireAuth, require('./household.routes'));
 router.use('/months', requireAuth, require('./month.routes'));
+router.use('/owner', requireAuth, require('./owner.routes'));
 router.post('/uploads', requireAuth, require('../controllers/upload.controller').middleware, upload.handle);
 
 module.exports = router;

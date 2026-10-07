@@ -12,6 +12,12 @@ const env = {
     .filter(Boolean),
   // Render sets RENDER_EXTERNAL_URL automatically, so the app works there without setting APP_URL.
   appUrl: (process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:5173').replace(/\/$/, ''),
+  // Emails allowed to open the site-owner page (all users, all households). If empty, the first
+  // account ever registered is the owner.
+  ownerEmails: (process.env.OWNER_EMAILS || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean),
   uploadMaxMb: Number(process.env.UPLOAD_MAX_MB) || 3,
   // Per IP. Everyone in a mess often shares one Wi-Fi IP, so keep this generous.
   rateLimitPerMin: Number(process.env.RATE_LIMIT_PER_MIN) || 1000,

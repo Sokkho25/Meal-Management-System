@@ -5,15 +5,20 @@ const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { signToken } = require('../middleware/auth');
 const { resolveInvites } = require('../services/invite.service');
+const { isOwner } = require('../services/owner.service');
+
+// The client uses isOwner to show the site-owner page.
+const userJSON = async (user) => ({ ...user.toJSON(), isOwner: await isOwner(user) });
 
 const hashToken = (t) => crypto.createHash('sha256').update(t).digest('hex');
 
 exports.register = async (req, res) => {
   const { name, email, password, phone } = req.body;
   if (await User.exists({ email })) throw ApiError.conflict('An account with this email already exists');
-  const user = await User.create({ name, email, phone, passwordHash: await bcrypt.hash(password, 12) });
+  const now = new Date();
+  const user = await User.create({ name, email, phone, passwordHash: await bcrypt.hash(password, 12), lastSeenAt: now, loginCount: 1 });
   await resolveInvites(user);
-  res.status(201).json({ token: signToken(user), user });
+  res.status(201).json({ token: signToken(user), user: await userJSON(user) });
 };
 
 exports.login = async (req, res) => {
@@ -22,13 +27,14 @@ exports.login = async (req, res) => {
   // Same message for unknown email and wrong password.
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) throw ApiError.unauthorized('Incorrect email or password');
   await resolveInvites(user);
-  res.json({ token: signToken(user), user });
+  await User.updateOne({ _id: user._id }, { $set: { lastSeenAt: new Date() }, $inc: { loginCount: 1 } });
+  res.json({ token: signToken(user), user: await userJSON(user) });
 };
 
 // JWTs are stateless; the client discards its token. Kept for API symmetry.
 exports.logout = async (_req, res) => res.status(204).end();
 
-exports.me = async (req, res) => res.json({ user: req.user });
+exports.me = async (req, res) => res.json({ user: await userJSON(req.user) });
 
 exports.updateProfile = async (req, res) => {
   const { name, phone, avatarUrl, notificationPrefs } = req.body;
@@ -37,7 +43,7 @@ exports.updateProfile = async (req, res) => {
   if (avatarUrl !== undefined) req.user.avatarUrl = avatarUrl;
   if (notificationPrefs) Object.assign(req.user.notificationPrefs, notificationPrefs);
   await req.user.save();
-  res.json({ user: req.user });
+  res.json({ user: await userJSON(req.user) });
 };
 
 exports.changePassword = async (req, res) => {
@@ -74,5 +80,5 @@ exports.resetPassword = async (req, res) => {
   user.passwordResetTokenHash = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
-  res.json({ token: signToken(user), user });
+  res.json({ token: signToken(user), user: await userJSON(user) });
 };

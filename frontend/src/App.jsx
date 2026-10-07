@@ -23,6 +23,7 @@ const History = lazy(() => import('./pages/History'));
 const Settings = lazy(() => import('./pages/Settings'));
 const CloseMonth = lazy(() => import('./pages/CloseMonth'));
 const NewMonth = lazy(() => import('./pages/NewMonth'));
+const Owner = lazy(() => import('./pages/Owner'));
 
 function RequireAuth() {
   const { user, ready } = useAuth();
@@ -88,6 +89,7 @@ export default function App() {
               <Route path="/settings" element={<Settings />} />
               <Route path="/close" element={<CloseMonth />} />
               <Route path="/months/new" element={<NewMonth />} />
+              <Route path="/owner" element={<Owner />} />
             </Route>
           </Route>
         </Route>
